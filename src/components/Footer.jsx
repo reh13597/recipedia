@@ -2,7 +2,6 @@ import { featuresLinks, aboutUsLinks } from "../constants";
 import {Link} from 'react-router-dom';
 import logo from '../assets/icons/recipe-book.png';
 
-
 export default function Footer() {
     return(
         <footer className="bg-base-100 text-secondary-content">

@@ -12,8 +12,6 @@ export default function Search() {
     const [loading, setLoading] = useState(false)
     const [isVisible, setIsVisible] = useState(false)
 
-    const key = import.meta.env.VITE_API_NINJAS_KEY
-
     // Get the endpoint for the topic the user has chosen
     // i.e., area, name, category, or main ingredient
     const getEndpoint = (searchType, query) => {
@@ -22,9 +20,7 @@ export default function Search() {
 
         switch (searchType) {
             case 'name':
-                // If you want to use TheMealDB's recipe search by name endpoint instead of API Ninjas, replace the line below with this line:
-                // return `${baseUrl}/search.php?s=${encodedQuery}`
-                return `https://api.api-ninjas.com/v1/recipe?query=${encodedQuery}`
+                return `${baseUrl}/search.php?s=${encodedQuery}`
             case 'ingredient':
                 return `${baseUrl}/filter.php?i=${encodedQuery}`
             case 'area':
@@ -62,58 +58,17 @@ export default function Search() {
         return ingredients
     }
 
-    // Format the ingredients for one recipe from API Ninjas
-    const formatAPINinjasIngredients = (ingredients) => {
-        if (!ingredients) {
-            return []
-        }
-
-        // split the pipe-separated string and process each ingredient
-        return ingredients.split('|').map(ingredient => {
-            const trimmed = ingredient.trim()
-            // use regex to separate measure from ingredient name
-            const match = trimmed.match(/^([\d\s/\-. \w]*)\s+(.+)$/)
-
-            // check if ingredient name and measure are separated properly
-            if (match && match[1] && match[2]) {
-                return {
-                    name: match[2].trim(),
-                    measure: match[1].trim()
-                }
-            } else {
-                return {
-                    name: trimmed,
-                    measure: ''
-                }
-            }
-        // remove ingredients with empty names
-        }).filter(ingredient => ingredient.name)
-    }
-
     // Format the recipe objects to have name, image, area, category, instructions, and ingredients
-    const formatRecipes = (data, isAPINinjas) => {
-        // Check if the recipe is from API Ninjas or TheMealDB
-        if (isAPINinjas) {
-            return data.map(recipe => ({
-                name: recipe.title,
-                // API ninjas doesn't provide image, category, or area data
-                image: null,
-                category: 'Unavailable',
-                area: 'Unavailable',
-                instructions: recipe.instructions,
-                ingredients: formatAPINinjasIngredients(recipe.ingredients),
+    const formatRecipes = (data) => {
+        return data.meals
+            .map(meal => ({
+                name: meal.strMeal,
+                image: meal.strMealThumb,
+                category: meal.strCategory,
+                area: meal.strArea,
+                instructions: meal.strInstructions,
+                ingredients: formatTheMealDBIngredients(meal),
             }))
-        } else {
-            return data.meals
-                .map(meal => ({
-                    name: meal.strMeal,
-                    image: meal.strMealThumb,
-                    category: meal.strCategory,
-                    area: meal.strArea,
-                    instructions: meal.strInstructions,
-                    ingredients: formatTheMealDBIngredients(meal),
-                }))
-        }
     }
 
     // In the case where the user chooses area, category, or main ingredient, this function is ran
@@ -194,18 +149,9 @@ export default function Search() {
         try {
             // get the endpoint needed for the searchType
             const endpoint = getEndpoint(searchType, query)
-            // check if the recipe search by name is being used
-            const isApiNinjas = searchType === 'name'
-
-            // configure the fetch options for an API Ninjas call
-            const fetchOptions = isApiNinjas ? {
-                headers: {
-                    'X-Api-Key': key
-                }
-            } : {}
 
             // make the API call
-            const response = await fetch(endpoint, fetchOptions)
+            const response = await fetch(endpoint)
 
             // if the response is unsuccessful, throw an error
             if (!response.ok) {
@@ -215,15 +161,8 @@ export default function Search() {
             // parse the JSON response
             const data = await response.json()
 
-            // check if any recipes were found (different response format for each API)
-            let hasRecipes = false
-            if (isApiNinjas) {
-                // API Ninjas returns one array corresponding to one recipe
-                hasRecipes = Array.isArray(data) && data.length > 0
-            } else {
-                // TheMealDB returns a JSON object with a 'meals' array that contains many recipes
-                hasRecipes = data.meals && data.meals.length > 0
-            }
+            // TheMealDB returns a JSON object with a 'meals' array that contains many recipes
+            const hasRecipes = data.meals && data.meals.length > 0
 
             // if there were no recipes found, handle the error
             if (!hasRecipes) {
@@ -233,11 +172,11 @@ export default function Search() {
             }
 
             // format the recipes
-            let formattedRecipes = formatRecipes(data, isApiNinjas)
+            let formattedRecipes = formatRecipes(data)
 
             // Only fill recipe data for non-name searches
             // Name searches already return complete data
-            if (!isApiNinjas && searchType !== 'name') {
+            if (searchType !== 'name') {
                 formattedRecipes = await fillRecipeData(formattedRecipes)
             }
 
@@ -293,12 +232,6 @@ export default function Search() {
 
                 <div className="bg-white p-6 rounded-xl shadow-2xl max-h-full flex-1 space-y-5 overflow-y-auto transition">
                     <SearchHint searchType={searchType} />
-
-                    {searchType === 'name' && (
-                        <div className={`bg-base-200 p-6 rounded-xl shadow-lg transition ${isVisible ? 'opacity-100 translate-y-0 delay-500' : 'opacity-0 translate-y-10'}`}>
-                            <h1><span className="font-medium">Note: {" "}</span>Due to project and API constraints, this feature only returns one search result and is missing image, cuisine, and category data.</h1>
-                        </div>
-                    )}
                 {/* handles error if API fails or user input is invalid */}
                     {error && (
                         <div className="bg-base-200 p-6 rounded-xl shadow-lg">

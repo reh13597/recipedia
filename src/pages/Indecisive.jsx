@@ -108,7 +108,7 @@ export default function Indecisive() {
             setRecipes(formattedRecipes)
         } catch (err) {
             // catch any errors and handle them
-            console.error('Error:', err.message)
+            // console.error('Error:', err.message)
             setError('Error: Failed to fetch recipes. Please try again.')
             setRecipes([])
         } finally {

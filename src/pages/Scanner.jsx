@@ -81,7 +81,7 @@ export default function Scanner() {
 
             if (!imageToText.ok) {
                 const errorText = await imageToText.text();
-                console.error("Image to text error:", imageToText.status, errorText);
+                // console.error("Image to text error:", imageToText.status, errorText);
                 throw new Error("Error: Couldn't analyze text. Try an image with clearer text.");
             }
 
@@ -106,7 +106,7 @@ export default function Scanner() {
 
             if (!nutrition.ok) {
                 const errorText = await nutrition.text();
-                console.error("Text to nutrition error:", nutrition.status, errorText);
+                // console.error("Text to nutrition error:", nutrition.status, errorText);
                 setAPIError(true)
                 throw new Error();
             }
@@ -119,7 +119,7 @@ export default function Scanner() {
 
             setNutritionData(data);
         } catch (err) {
-            console.error("Nutritional Analysis Error:", err);
+            // console.error("Nutritional Analysis Error:", err);
 
             if (!err.message || (err.message === "Failed to fetch")) {
                 setError("Error: An unexpected error occurred. Please try again.")
