@@ -37,7 +37,7 @@ export default function Footer() {
                                 </ul>
                             </div>
                             <div>
-                                <h2 className="text-2xl text-base-content mb-2">About Us</h2>
+                                <h2 className="text-2xl text-base-content mb-2">About</h2>
                                 <ul className="space-y-1">
                                     {aboutUsLinks.map((link, index) => (
                                         <li key={index}>

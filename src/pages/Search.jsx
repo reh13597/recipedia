@@ -230,7 +230,7 @@ export default function Search() {
                     setRecipes={setRecipes}
                 />
 
-                <div className="bg-white p-6 rounded-xl shadow-2xl max-h-full flex-1 space-y-5 overflow-y-auto transition">
+                <div className={`bg-white p-6 rounded-xl shadow-2xl max-h-full flex-1 space-y-5 overflow-y-auto transition ${isVisible ? 'opacity-100 translate-y-0 delay-500' : 'opacity-0 translate-y-10'}`}>
                     <SearchHint searchType={searchType} />
                 {/* handles error if API fails or user input is invalid */}
                     {error && (

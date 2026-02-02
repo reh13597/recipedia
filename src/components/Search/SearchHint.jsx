@@ -24,7 +24,7 @@ export default function SearchHint({ searchType }) {
     })
 
     return (
-        <div className={`bg-base-200 p-6 rounded-xl shadow-lg transition ${isVisible ? 'opacity-100 translate-y-0 delay-500' : 'opacity-0 translate-y-10'}`}>
+        <div className={`bg-base-200 p-6 rounded-xl shadow-lg transition ${isVisible ? 'opacity-100 translate-y-0 delay-700' : 'opacity-0 translate-y-10'}`}>
             {((searchType === "area") || (searchType === "category")) && (
                 <h1 className="font-medium">Possible search terms (only enter 1 word):</h1>
             )}

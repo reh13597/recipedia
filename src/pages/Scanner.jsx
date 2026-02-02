@@ -324,7 +324,7 @@ export default function Scanner() {
                             </p>
                         </div>
                     )}
-                    <div className={`bg-base-200 p-6 rounded-xl shadow-lg transition ${isVisible ? 'opacity-100 translate-y-0 delay-500' : 'opacity-0 translate-y-10'}`}>
+                    <div className={`bg-base-200 p-6 rounded-xl shadow-lg transition ${isVisible ? 'opacity-100 translate-y-0 delay-700' : 'opacity-0 translate-y-10'}`}>
                         <h1><span className="font-medium">Note: {" "}</span>Images with unclear text or no text will likely cause an error.</h1>
                     </div>
                     {loading && (

@@ -149,7 +149,7 @@ export default function Indecisive() {
                 <Horizontal />
             </div>
             <div className="flex flex-col w-[40%] gap-6">
-                <div className="bg-white p-6 rounded-xl shadow-2xl max-h-full flex-1 space-y-5 overflow-y-auto">
+                <div className={`bg-white p-6 rounded-xl shadow-2xl max-h-full flex-1 space-y-5 overflow-y-auto transition ${isVisible ? 'opacity-100 translate-y-0 delay-100' : 'opacity-0 translate-y-10'}`}>
                     <div className="flex flex-row justify-between">
                         <div className="space-y-6 w-full">
                             {recipes.map((recipe, idx) => (
@@ -161,7 +161,7 @@ export default function Indecisive() {
                     </div>
                     {/* if the user just landed on this page, display this message */}
                     {recipes.length === 0 && !error && count === 0 && (
-                        <div className={`bg-base-200 p-6 rounded-xl shadow-lg transition ${isVisible ? 'opacity-100 translate-y-0 delay-100' : 'opacity-0 translate-y-10'}`}>
+                        <div className={`bg-base-200 p-6 rounded-xl shadow-lg transition ${isVisible ? 'opacity-100 translate-y-0 delay-300' : 'opacity-0 translate-y-10'}`}>
                             <h1>Looks like you haven't clicked the button yet. Click it on the left!</h1>
                         </div>
                     )}
