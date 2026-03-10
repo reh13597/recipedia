@@ -25,7 +25,7 @@ export default function Section1_Home() {
             </div>
             <div className="flex flex-col col-span-3 mt-40 text-center">
                 <div className={`transition ${isVisible ? 'opacity-100 translate-y-0 delay-100' : 'opacity-0 translate-y-10'}`}>
-                    <h1 className="text-7xl">Eat smarter, not harder.</h1>
+                    <h1 className="text-7xl text-white">Eat smarter, not harder.</h1>
                     <p className="mt-10 text-3xl text-secondary-content text-balance">Welcome to Recipedia, the recipe and nutrition platform that makes healthy eating easy. Whether you're a busy professional, fitness coach, or just someone looking to make better nutrition choices, Recipedia makes it possible to create delicious, home cooked meals that fit your dietary preferences.</p>
                     <p className="text-3xl text-secondary-content">Scroll down on this page to see what we have to offer!</p>
                 </div>

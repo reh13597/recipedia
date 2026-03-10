@@ -38,5 +38,7 @@
 
 :root {
   font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: var(--color-base-200);
+  background: radial-gradient(circle,oklch(68.829% 0.00568 106.765) 0%,oklch(76.78% 0.015 22.511) 60%,oklch(52.96% 0.07835 36.676) 100%);
+
+  min-height: 100vh;
 }
