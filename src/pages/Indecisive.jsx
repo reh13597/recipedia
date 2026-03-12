@@ -1,183 +1,147 @@
 import { useState, useEffect } from "react";
-import Horizontal from '../components/Designs/Horizontal'
-import RandomRecipe from '../components/Search/SearchResult'
+import RecipeCard from '../components/Search/RecipeCard';
+import { FaDice, FaMagic, FaUtensils, FaQuestionCircle } from 'react-icons/fa';
+import FoodIconsBar from '../components/Shared/FoodIconsBar';
 
 export default function Indecisive() {
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState("")
-    const [recipes, setRecipes] = useState([])
-    const [count, setCount] = useState(0)
-    const [isVisible, setIsVisible] = useState(false)
-
-    // Format the ingredients for one recipe from TheMealDB
-    // exact same function as formatTheMealDBIngredients in Search.jsx
-    const formatIngredients = (meal) => {
-        if (!meal) {
-            return []
-        }
-
-        const ingredients = []
-
-        for (let i = 1; i <= 20; i++) {
-            const ingredient = meal[`strIngredient${i}`]
-            const measure = meal[`strMeasure${i}`]
-
-            if (ingredient && ingredient.trim()) {
-                ingredients.push({
-                    name: ingredient.trim(),
-                    measure: measure ? measure.trim() : ''
-                })
-            }
-        }
-
-        return ingredients
-    }
-
-    // Check if a recipe has all the required data
-    const isRecipeComplete = (meal) => {
-        return (
-            meal.strMeal && meal.strMeal.trim() &&
-            meal.strMealThumb && meal.strMealThumb.trim() &&
-            meal.strCategory && meal.strCategory.trim() &&
-            meal.strArea && meal.strArea.trim()
-        )
-    }
-
-    // Format a recipe to have name, image, area, category, instructions, and ingredients
-    const formatRecipe = (meal) => {
-        return {
-            name: meal.strMeal,
-            image: meal.strMealThumb,
-            category: meal.strCategory,
-            area: meal.strArea,
-            instructions: meal.strInstructions,
-            ingredients: formatIngredients(meal),
-        }
-    }
-
-    // Fetch a random recipe
-    const fetchRecipe = async () => {
-        // make the API call
-        const response = await fetch("https://www.themealdb.com/api/json/v1/1/random.php")
-
-        // if the response is unsuccessful, throw an error
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status}`)
-        }
-
-        // parse the JSON data
-        const data = await response.json()
-
-        // if there were no recipes found, throw an error
-        if (!data || !data.meals || data.meals.length === 0) {
-            throw new Error('No recipe data received. Try again.')
-        }
-
-        // return the single random recipe (for TheMealDB, recipes are returned in a list, even if there's only one recipe)
-        return data.meals[0]
-    }
-
-    // This function is ran when the user clicks the button
-    const handleGeneration = async () => {
-        // reset states on button click
-        setRecipes([])
-        setError('')
-        // start the loader
-        setLoading(true)
-
-        try {
-            const recipes = []
-
-            // generate 3 random recipes and add them to the array
-            for (let i = 0; i < 3; i++) {
-                recipes.push(fetchRecipe())
-            }
-
-            // wait for all 3 recipe requests finish at the same time
-            const meals = await Promise.all(recipes)
-
-            // process the recipe data
-            const formattedRecipes = meals
-                // filter out recipes with missing data
-                .filter(meal => isRecipeComplete(meal))
-                .map((meal) =>
-                    formatRecipe(meal)
-            )
-
-            // update the recipe list with the proper recipes
-            setRecipes(formattedRecipes)
-        } catch (err) {
-            // catch any errors and handle them
-            // console.error('Error:', err.message)
-            setError('Error: Failed to fetch recipes. Please try again.')
-            setRecipes([])
-        } finally {
-            // stop the loader
-            setLoading(false)
-            // set count to 1 to move out of the initial page load state
-            setCount(1)
-        }
-    }
+    // ... rest of code ...
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+    const [recipes, setRecipes] = useState([]);
+    const [hasGenerated, setHasGenerated] = useState(false);
+    const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
-        // starts a timer, then after 300 ms, the state of isVisible changes
-        // this is used for the animation of components on page load
-        const showTimeout = setTimeout(() => setIsVisible(true), 300)
+        const timer = setTimeout(() => setIsVisible(true), 100);
+        return () => clearTimeout(timer);
+    }, []);
 
-        // if the component unmounts or re-renders before the timeout finishes,
-        // the timer is cleared to prevent memory leaks and warnings
-        return () => {
-            clearTimeout(showTimeout);
+    const formatIngredients = (meal) => {
+        const ingredients = [];
+        for (let i = 1; i <= 20; i++) {
+            const ing = meal[`strIngredient${i}`];
+            const measure = meal[`strMeasure${i}`];
+            if (ing?.trim()) {
+                ingredients.push({ name: ing.trim(), measure: measure?.trim() || '' });
+            }
         }
-    })
+        return ingredients;
+    }
+
+    const fetchRandomRecipe = async () => {
+        const res = await fetch("https://www.themealdb.com/api/json/v1/1/random.php");
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        const data = await res.json();
+        return data.meals[0];
+    }
+
+    const handleGeneration = async () => {
+        setLoading(true);
+        setError("");
+        setRecipes([]);
+        
+        try {
+            const mealPromises = Array.from({ length: 3 }, fetchRandomRecipe);
+            const meals = await Promise.all(mealPromises);
+            
+            const formatted = meals.map(meal => ({
+                name: meal.strMeal,
+                image: meal.strMealThumb,
+                category: meal.strCategory,
+                area: meal.strArea,
+                instructions: meal.strInstructions,
+                ingredients: formatIngredients(meal),
+            }));
+
+            setRecipes(formatted);
+            setHasGenerated(true);
+        } catch (err) {
+            setError("Failed to fetch recipes. Please try again.");
+        } finally {
+            setLoading(false);
+        }
+    }
 
     return (
-        <div className="flex flex-row justify-center px-20 py-10 space-x-20 h-200">
-            <div className={`w-[35%] text-left text-3xl flex flex-col transition ${isVisible ? 'opacity-100 translate-y-0 delay-100' : 'opacity-0 translate-y-10'}`}>
-                <p className="pb-3">Don't know what you want to eat today?</p>
-                <p className="py-3">Can't settle on a recipe?</p>
-                <p className="py-3">Let us do the work for you!</p>
-                <div className="py-10">
+        <div className="min-h-screen pt-12 pb-24 px-6 lg:px-20 max-w-7xl mx-auto space-y-16 flex flex-col items-center">
+            {/* Hero Section */}
+            <div className={`text-center space-y-6 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+                <h1 className="text-5xl lg:text-7xl font-black tracking-tight">
+                    Feeling <span className="gradient-text">Indecisive?</span>
+                </h1>
+                <p className="text-xl text-base-content/60 max-w-2xl mx-auto font-medium leading-relaxed">
+                    Can't decide what to cook? Let fate choose your next culinary adventure. 
+                    Roll the dice to get three perfectly random recipe suggestions.
+                </p>
+                
+                <div className="pt-8">
                     <button
-                        className="mt-2 btn btn-primary w-[80%] rounded-full shadow-xl text-lg transition-all duration-300 hover:scale-105"
                         onClick={handleGeneration}
                         disabled={loading}
-                        >
-                        Surprise Me!
+                        className="btn btn-primary btn-lg rounded-[2rem] px-12 transition-all duration-500 hover:scale-110 gap-4 group"
+                    >
+                        {loading ? <span className="loading loading-spinner"></span> : <FaDice className="group-hover:rotate-180 transition-transform duration-500" size={24} />}
+                        <span className="text-xl font-black tracking-wide">Surprise Me!</span>
                     </button>
                 </div>
-                <Horizontal />
             </div>
-            <div className="flex flex-col w-[40%] gap-6">
-                <div className={`bg-white p-6 rounded-xl shadow-2xl max-h-full flex-1 space-y-5 overflow-y-auto transition ${isVisible ? 'opacity-100 translate-y-0 delay-100' : 'opacity-0 translate-y-10'}`}>
-                    <div className="flex flex-row justify-between">
-                        <div className="space-y-6 w-full">
-                            {recipes.map((recipe, idx) => (
-                                <div key={idx}>
-                                    <RandomRecipe key={idx} number={idx + 1} name={recipe.name} image={recipe.image} recipeData={recipe} area={recipe.area} category={recipe.category} />
-                                </div>
-                            ))}
+
+            {/* Results Grid */}
+            <div className="w-full space-y-12">
+                {!hasGenerated && !loading && !error && (
+                    <div className={`flex flex-col items-center justify-center py-20 opacity-20 space-y-6 transition-all duration-1000 delay-300 ${isVisible ? 'opacity-20 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+                        <div className="w-32 h-32 rounded-full border-4 border-dashed border-base-content flex items-center justify-center">
+                            <FaQuestionCircle size={48} />
+                        </div>
+                        <p className="text-2xl font-black italic tracking-tight">Waiting for your command...</p>
+                    </div>
+                )}
+
+                {loading && (
+                    <div className="flex flex-col items-center justify-center py-20 gap-8">
+                        <div className="relative">
+                            <div className="w-24 h-24 rounded-full border-8 border-primary/20 border-t-primary animate-spin"></div>
+                            <FaMagic className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-primary animate-pulse" size={32} />
+                        </div>
+                        <div className="text-center">
+                            <p className="text-3xl font-black text-primary animate-pulse">Consulting the Chefs...</p>
+                            <p className="text-base-content/50 font-medium italic mt-2">Selecting three random masterpieces from our vault.</p>
                         </div>
                     </div>
-                    {/* if the user just landed on this page, display this message */}
-                    {recipes.length === 0 && !error && count === 0 && (
-                        <div className={`bg-base-200 p-6 rounded-xl shadow-lg transition ${isVisible ? 'opacity-100 translate-y-0 delay-300' : 'opacity-0 translate-y-10'}`}>
-                            <h1>Looks like you haven't clicked the button yet. Click it on the left!</h1>
-                        </div>
-                    )}
-                    {error && (
-                        <div className="bg-base-200 p-6 rounded-xl shadow-lg">
-                            <h1 className="font-medium text-error">{error}</h1>
-                        </div>
-                    )}
-                    {loading && (
-                        <div className="flex flex-row space-x-5">
-                            <p className="text-2xl">Fetching recipes, hang tight!</p>
-                            <span className="loading loading-spinner text-primary loading-xl"></span>
-                        </div>
-                    )}
-                </div>
+                )}
+
+                {error && (
+                    <div className="max-w-xl mx-auto p-8 bg-error/10 border border-error/20 rounded-[2rem] text-error flex flex-col items-center gap-4 text-center animate-shake">
+                        <FaUtensils size={40} className="opacity-50" />
+                        <p className="text-xl font-bold">{error}</p>
+                        <button onClick={handleGeneration} className="btn btn-error btn-outline rounded-xl px-8">Try Again</button>
+                    </div>
+                )}
+
+                {recipes.length > 0 && !loading && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-in fade-in slide-in-from-bottom-10 duration-1000">
+                        {recipes.map((recipe, idx) => (
+                            <RecipeCard 
+                                key={`${recipe.name}-${idx}`} 
+                                name={recipe.name} 
+                                image={recipe.image} 
+                                recipeData={recipe} 
+                                area={recipe.area} 
+                                category={recipe.category} 
+                            />
+                        ))}
+                    </div>
+                )}
             </div>
+
+            {hasGenerated && !loading && (
+                <div className="text-center pt-8 opacity-50 hover:opacity-100 transition-opacity">
+                    <p className="text-sm font-bold uppercase tracking-widest text-base-content/40">Not satisfied?</p>
+                    <button onClick={handleGeneration} className="btn btn-ghost btn-sm rounded-xl mt-2 text-primary">Roll Again</button>
+                </div>
+            )}
+
+            <FoodIconsBar />
         </div>
     )
 }

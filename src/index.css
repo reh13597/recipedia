@@ -3,42 +3,169 @@
 
 @plugin "daisyui/theme" {
   name: "Recipedia";
+  default: true;
+  prefersdark: true;
+  color-scheme: "light";
+  --color-base-100: oklch(98% 0.01 90);
+  --color-base-200: oklch(95% 0.02 90);
+  --color-base-300: oklch(92% 0.03 90);
+  --color-base-content: oklch(20% 0.02 90);
+  --color-primary: oklch(60% 0.2 30); /* Bold Tomato/Orange */
+  --color-primary-content: oklch(100% 0 0);
+  --color-secondary: oklch(85% 0.15 80); /* Warm Honey */
+  --color-secondary-content: oklch(25% 0.05 80);
+  --color-accent: oklch(65% 0.2 140); /* Fresh Herb Green */
+  --color-accent-content: oklch(100% 0 0);
+  --color-neutral: oklch(30% 0.02 90);
+  --color-neutral-content: oklch(98% 0.01 90);
+  --radius-selector: 1rem;
+  --radius-field: 0.75rem;
+  --radius-box: 1.5rem;
+  --border: 1px;
+}
+
+@plugin "daisyui/theme" {
+  name: "RecipediaDark";
   default: false;
   prefersdark: false;
   color-scheme: "dark";
-  --color-base-100: oklch(100% 0 0);
-  --color-base-200: oklch(93.71% 0.0043 17.23);
-  --color-base-300: oklch(82.34% 0 0);
-  --color-base-content: oklch(0 0 0);
-  --color-primary: oklch(65.84% 0.1525 37.6);
+  --color-base-100: oklch(25% 0.02 90);
+  --color-base-200: oklch(20% 0.02 90);
+  --color-base-300: oklch(15% 0.02 90);
+  --color-base-content: oklch(95% 0.01 90);
+  --color-primary: oklch(65% 0.2 30);
   --color-primary-content: oklch(100% 0 0);
-  --color-secondary: oklch(0.7063 0.0999 37.56);
-  --color-secondary-content: oklch(44.23% 0 0);
-  --color-accent: oklch(63.5% 0.1117 37.56);
-  --color-accent-content: oklch(38% 0.063 188.416);
-  --color-neutral: oklch(63.5% 0.1117 37.56);
-  --color-neutral-content: oklch(92% 0.004 286.32);
-  --color-info: oklch(74% 0.16 232.661);
-  --color-info-content: oklch(29% 0.066 243.157);
-  --color-success: oklch(76% 0.177 163.223);
-  --color-success-content: oklch(37% 0.077 168.94);
-  --color-warning: oklch(82% 0.189 84.429);
-  --color-warning-content: oklch(41% 0.112 45.904);
-  --color-error: oklch(71% 0.194 13.428);
-  --color-error-content: oklch(27% 0.105 12.094);
-  --radius-selector: 0.5rem;
-  --radius-field: 0.25rem;
-  --radius-box: 0.5rem;
-  --size-selector: 0.25rem;
-  --size-field: 0.25rem;
+  --color-secondary: oklch(75% 0.15 80);
+  --color-secondary-content: oklch(20% 0.02 80);
+  --color-accent: oklch(70% 0.2 140);
+  --color-accent-content: oklch(100% 0 0);
+  --color-neutral: oklch(15% 0.02 90);
+  --color-neutral-content: oklch(95% 0.01 90);
+  --radius-selector: 1rem;
+  --radius-field: 0.75rem;
+  --radius-box: 1.5rem;
   --border: 1px;
-  --depth: 1;
-  --noise: 0;
 }
 
-:root {
-  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: radial-gradient(circle,oklch(68.829% 0.00568 106.765) 0%,oklch(76.78% 0.015 22.511) 60%,oklch(52.96% 0.07835 36.676) 100%);
+@layer base {
+  :root {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-  min-height: 100vh;
+  h1, h2, h3, .font-heading {
+    font-family: 'Playfair Display', serif;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    transition: background-color 0.5s ease, color 0.5s ease;
+    background-attachment: fixed;
+  }
+
+  /* Light Mode Background */
+  [data-theme="Recipedia"] body {
+    background-color: oklch(98% 0.01 90);
+    background-image:
+      radial-gradient(circle at center, oklch(92% 0.12 45 / 0.9) 0%, oklch(98% 0.01 90) 55%);
+    color: oklch(20% 0.02 90);
+  }
+
+  /* Dark Mode Background */
+  [data-theme="RecipediaDark"] body {
+    background-color: oklch(15% 0.02 90);
+    background-image:
+      radial-gradient(circle at center, oklch(25% 0.15 30 / 0.25) 0%, oklch(15% 0.02 90) 75%);
+    color: oklch(95% 0.01 90);
+  }
+}
+
+@layer utilities {
+  .glass {
+    transition: background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+  }
+
+  [data-theme="Recipedia"] .glass {
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow:
+      0 8px 32px 0 rgba(222, 107, 72, 0.1),
+      0 4px 12px 0 rgba(222, 107, 72, 0.05);
+  }
+
+  [data-theme="RecipediaDark"] .glass {
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow:
+      0 8px 32px 0 rgba(0, 0, 0, 0.4),
+      0 0 15px 0 rgba(222, 107, 72, 0.1);
+  }
+
+  /* Global Button Glow */
+  .btn {
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px 0 rgba(222, 107, 72, 0.15);
+  }
+
+  .btn-primary {
+    box-shadow: 0 8px 20px 0 rgba(222, 107, 72, 0.3);
+  }
+
+  .btn:hover {
+    box-shadow: 0 10px 25px 0 rgba(222, 107, 72, 0.4);
+  }
+
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  .hover-lift {
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .hover-lift:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: oklch(60% 0.2 30 / 0.2);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(60% 0.2 30 / 0.4);
 }

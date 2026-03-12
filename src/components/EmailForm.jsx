@@ -1,162 +1,108 @@
 import emailjs from 'emailjs-com';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { FaPaperPlane, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
 
 export default function EmailForm() {
-    const [name, setName] = useState('')
-    const [email, setEmail] = useState('')
-    const [subject, setSubject] = useState('')
-    const [message, setMessage] = useState('')
-
-    const [showSuccessMessage, setShowSuccessMessage] = useState(false)
-    const [showErrorMessage, setShowErrorMessage] = useState(false)
-    const [isVisible, setIsVisible] = useState(false)
+    const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
+    const [status, setStatus] = useState({ type: '', msg: '' });
+    const [loading, setLoading] = useState(false);
 
     const serviceID = import.meta.env.VITE_EMAILJS_SERVICE_ID
     const templateID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID
     const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
 
-    // handle form submission
-    const handleSubmit = (e) => {
-        // prevents the page from refreshing/redirecting on form submission
-        e.preventDefault()
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setStatus({ type: '', msg: '' });
 
-        // send an email using EmailJS
-        emailjs.sendForm(
-            // the type of EmailJS service being used
-            serviceID,
-            // the specific email template being used
-            templateID,
-            // the form input data
-            e.target,
-            // EmailJS key for authentication
-            publicKey
-        ).then(
-            // on success, show the success message
-            () => setShowSuccessMessage(true),
-            // on failure, show the error message
-            () => setShowErrorMessage(true)
-        )
-
-        // reset the states after form submission
-        setName('')
-        setEmail('')
-        setSubject('')
-        setMessage('')
+        try {
+            await emailjs.sendForm(serviceID, templateID, e.target, publicKey);
+            setStatus({ type: 'success', msg: 'Message sent successfully! We\'ll get back to you soon.' });
+            setFormData({ name: '', email: '', subject: '', message: '' });
+        } catch (error) {
+            setStatus({ type: 'error', msg: 'Failed to send message. Please try again later.' });
+        } finally {
+            setLoading(false);
+            setTimeout(() => setStatus({ type: '', msg: '' }), 6000);
+        }
     }
 
-    useEffect(() => {
-        // starts a timer, then after a certain amount of ms, the states change
-        // this is used for the animation of components on page load and for showing/hiding success/error messages
-        const showTimeout = setTimeout(() => setIsVisible(true), 300)
-        const showSuccess = setTimeout(() => setShowSuccessMessage(false), 10000)
-        const showError = setTimeout(() => setShowErrorMessage(false), 10000)
-
-        // if the component unmounts or re-renders before the timeouts finish,
-        // the timers are cleared to prevent memory leaks and warnings
-        return () => {
-            clearTimeout(showTimeout);
-            clearTimeout(showSuccess);
-            clearTimeout(showError);
-        }
-    })
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.dataset.name || e.target.name]: e.target.value });
+    }
 
     return(
-        <form onSubmit={handleSubmit} className="grid grid-rows-[auto_auto_auto_auto] gap-10">
-            <div className="grid grid-cols-2 gap-5">
-                <fieldset className={`fieldset w-full transition ${isVisible ? 'opacity-100 translate-y-0 delay-300' : 'opacity-0 translate-y-10'}`}>
-                    <legend
-                        className="fieldset-legend text-lg">
-                        Name
-                    </legend>
+        <form onSubmit={handleSubmit} className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="space-y-2">
+                    <label className="text-sm font-black uppercase tracking-widest text-base-content/40 ml-4">Full Name</label>
                     <input
                         type="text"
                         name="from_name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="input w-full rounded-full bg-base-200 shadow-lg"
-                        placeholder="Your Name"
+                        data-name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        className="input input-lg w-full rounded-2xl bg-base-100 border-base-content/10 focus:border-primary focus:outline-none "
+                        placeholder="John Doe"
                         required
                     />
-                </fieldset>
-                <fieldset className={`fieldset w-full transition ${isVisible ? 'opacity-100 translate-y-0 delay-500' : 'opacity-0 translate-y-10'}`}>
-                    <legend
-                        className="fieldset-legend text-lg">
-                        Email
-                    </legend>
+                </div>
+                <div className="space-y-2">
+                    <label className="text-sm font-black uppercase tracking-widest text-base-content/40 ml-4">Email Address</label>
                     <input
                         type="email"
                         name="from_email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        pattern="[A-Za-z0-9.]+@[A-Za-z0-9]+\.[A-Za-z]+"
-                        className="input validator w-full rounded-full bg-base-200 shadow-lg"
-                        placeholder="example@mail.com"
+                        data-name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        className="input input-lg w-full rounded-2xl bg-base-100 border-base-content/10 focus:border-primary focus:outline-none "
+                        placeholder="john@example.com"
                         required
                     />
-                </fieldset>
+                </div>
             </div>
-            <fieldset className={`fieldset transition ${isVisible ? 'opacity-100 translate-y-0 delay-700' : 'opacity-0 translate-y-10'}`}>
-                <legend
-                    className="fieldset-legend text-lg">
-                    Subject
-                </legend>
+
+            <div className="space-y-2">
+                <label className="text-sm font-black uppercase tracking-widest text-base-content/40 ml-4">Subject</label>
                 <input
                     type="text"
                     name="subject"
-                    value={subject}
-                    onChange={(e) => setSubject(e.target.value)}
-                    className="input w-full rounded-full bg-base-200 shadow-lg"
-                    placeholder="Your Subject"
+                    value={formData.subject}
+                    onChange={handleChange}
+                    className="input input-lg w-full rounded-2xl bg-base-100 border-base-content/10 focus:border-primary focus:outline-none "
+                    placeholder="How can we help?"
                     required
                 />
-            </fieldset>
-            <fieldset className={`fieldset transition ${isVisible ? 'opacity-100 translate-y-0 delay-900' : 'opacity-0 translate-y-10'}`}>
-                <legend
-                    className="fieldset-legend text-lg">
-                    Message
-                </legend>
+            </div>
+
+            <div className="space-y-2">
+                <label className="text-sm font-black uppercase tracking-widest text-base-content/40 ml-4">Message</label>
                 <textarea
-                    type="text"
                     name="message"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    className="textarea h-30 w-full overflow-y-auto rounded-2xl bg-base-200 shadow-lg"
-                    placeholder="Your Message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    className="textarea textarea-lg w-full h-48 rounded-[2rem] bg-base-100 border-base-content/10 focus:border-primary focus:outline-none  pt-4"
+                    placeholder="Tell us more about your inquiry..."
                     required>
                 </textarea>
-            </fieldset>
-            <div className={`flex justify-center mb-15 transition ${isVisible ? 'opacity-100 translate-y-0 delay-1100' : 'opacity-0 translate-y-10'}`}>
-                <button
-                    type="submit"
-                    disabled={!name || !email || !subject || !message}
-                    className="btn btn-lg btn-primary w-[60%] text-xl rounded-full shadow-2xl text-white transition duration-300 hover:scale-105">
-                    Send!
-                </button>
             </div>
-            {showSuccessMessage && (
-                <div role="alert" className="alert bg-base-200 -mt-15 mb-15 text-black font-medium">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                    </svg>
-                    <span>Alert: Your message was sent successfully!</span>
-                </div>
-            )}
-            {showErrorMessage && (
-                <div role="alert" class="alert bg-base-200 -mt-15 mb-15 text-error font-medium">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                    </svg>
-                    <span>Error: Message sent unsuccessfully. Try again.</span>
+
+            <button
+                type="submit"
+                disabled={loading}
+                className="btn btn-primary btn-lg w-full rounded-2xl transition-all duration-300 gap-3"
+            >
+                {loading ? <span className="loading loading-spinner"></span> : <FaPaperPlane />}
+                {loading ? "Sending..." : "Send Message"}
+            </button>
+
+            {status.msg && (
+                <div className={`alert rounded-2xl border-none animate-in fade-in slide-in-from-top-4 ${
+                    status.type === 'success' ? 'bg-success/10 text-success' : 'bg-error/10 text-error'
+                }`}>
+                    {status.type === 'success' ? <FaCheckCircle size={20} /> : <FaExclamationCircle size={20} />}
+                    <span className="font-bold">{status.msg}</span>
                 </div>
             )}
         </form>
