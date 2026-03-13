@@ -1,7 +1,13 @@
 import React from 'react'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest'
 import Scanner from '../pages/Scanner'
+
+// Mock URL methods which are not available in JSDOM
+beforeAll(() => {
+  global.URL.createObjectURL = vi.fn(() => "mock-url");
+  global.URL.revokeObjectURL = vi.fn();
+});
 
 // Mock the global fetch function before each test
 beforeEach(() => {
@@ -23,6 +29,7 @@ describe('Scanner Component (integration)', () => {
     const nutritionData = [
       {
         name: 'Test Food',
+        calories: 100,
         fat_total_g: 1,
         fat_saturated_g: 2,
         sodium_mg: 3,
@@ -31,6 +38,7 @@ describe('Scanner Component (integration)', () => {
         carbohydrates_total_g: 6,
         fiber_g: 7,
         sugar_g: 8,
+        protein_g: 9,
       },
     ]
 
@@ -47,37 +55,35 @@ describe('Scanner Component (integration)', () => {
     const file = new File(['dummy'], 'test.png', { type: 'image/png' })
     fireEvent.change(fileInput, { target: { files: [file] } })
 
-    // Find and click the "Get Nutrition!" button
-    const analyseBtn = screen.getByRole('button', { name: /get nutrition!/i })
+    // Find and click the "Get Nutrition Facts" button
+    const analyseBtn = screen.getByRole('button', { name: /get nutrition facts/i })
     fireEvent.click(analyseBtn)
 
-    // Expect the loading indicator to be present
+    // Expect the loading indicator to be present (use findBy for async)
     expect(
-      screen.getByText(/Analyzing nutritional info, hang tight!/i)
+      await screen.findByText(/Analyzing\.\.\./i)
     ).toBeInTheDocument()
 
     // Wait for the loading indicator to disappear, signifying the end of the API calls
     await waitFor(() => {
       expect(
-        screen.queryByText(/Analyzing nutritional info, hang tight!/i)
+        screen.queryByText(/Analyzing\.\.\./i)
       ).not.toBeInTheDocument()
     })
 
     // Assert that the food item name from the mock data is rendered
-    expect(screen.getByText('Test Food')).toBeInTheDocument()
+    expect(screen.getByText(/Test Food/i)).toBeInTheDocument()
 
     // Assert that the fat content is displayed correctly
-    const fatLabel = screen.getByText('Fat:')
-    const fatLi = fatLabel.parentElement
-    expect(fatLi).toHaveTextContent(/Fat:\s*1\s*g/)
+    expect(screen.getByText('Fat')).toBeInTheDocument()
+    expect(screen.getByText('1')).toBeInTheDocument()
 
     // Assert that the carb content is displayed correctly
-    const carbsLabel = screen.getByText('Carbs:')
-    const carbsLi = carbsLabel.parentElement
-    expect(carbsLi).toHaveTextContent(/Carbs:\s*6\s*g/)
+    expect(screen.getByText('Carbs')).toBeInTheDocument()
+    expect(screen.getByText('6')).toBeInTheDocument()
 
-    // Assert that the estimated calories are also displayed
-    expect(screen.getByText(/Estimated Calories:/)).toBeInTheDocument()
+    // Assert that the calories are also displayed
+    expect(screen.getByText(/100 kcal/i)).toBeInTheDocument()
   })
 
   // Test case: handling a failed image-to-text API call
@@ -96,13 +102,13 @@ describe('Scanner Component (integration)', () => {
     fireEvent.change(fileInput, { target: { files: [file] } })
 
     // Click the analysis button
-    fireEvent.click(screen.getByRole('button', { name: /get nutrition!/i }))
+    fireEvent.click(screen.getByRole('button', { name: /get nutrition facts/i }))
 
     // Wait for the error message to appear
     await waitFor(() => {
       expect(
         screen.getByText(
-          /Error: Couldn't analyze text\. Try an image with clearer text\./i
+          /Could not read text from image\. Try a clearer photo\./i
         )
       ).toBeInTheDocument()
     })
@@ -123,13 +129,13 @@ describe('Scanner Component (integration)', () => {
     // Expect the file size error message to be displayed
     expect(
       screen.getByText(
-        /Error: File size is too large\. Please use a file smaller than 200 KB\./i
+        /File too large\. Max 200KB allowed\./i
       )
     ).toBeInTheDocument()
 
     // Assert that the analysis button is disabled
     expect(
-      screen.getByRole('button', { name: /get nutrition!/i })
+      screen.getByRole('button', { name: /get nutrition facts/i })
     ).toBeDisabled()
   })
 })

@@ -18,24 +18,28 @@ vi.mock('../components/Search/SearchHint', () => ({
   __esModule: true,
   default: () => <div>Hint</div>,
 }));
-vi.mock('../components/Search/SearchResult', () => ({
+vi.mock('../components/Search/RecipeCard', () => ({
   __esModule: true,
-  default: ({ number, name }) => (
-    <div data-testid="result">{number}: {name}</div>
+  default: ({ name }) => (
+    <div data-testid="result">{name}</div>
   ),
 }));
 
 
 describe('Search component', () => {
   // This is the fake data that will be returned by our mocked API call.
-  // It's structured to match the API Ninjas response format, which the component uses for 'name' searches.
-  const fakeApiNinjasMeal = [
-    {
-      title: 'Test Meal',
-      instructions: 'Do something.',
-      ingredients: '1 cup Ingredient A',
-    }
-  ];
+  // It's structured to match the TheMealDB response format.
+  const fakeMealDBResponse = {
+    meals: [
+      {
+        strMeal: 'Test Meal',
+        strMealThumb: 'https://example.com/thumb.jpg',
+        strCategory: 'Test Category',
+        strArea: 'Test Area',
+        strInstructions: 'Do something.',
+      }
+    ]
+  };
 
   // This runs before each test, clearing previous mocks.
   afterEach(() => {
@@ -48,7 +52,7 @@ describe('Search component', () => {
     // When the component calls fetch, this mock will intercept it.
     vi.spyOn(global, 'fetch').mockResolvedValue({
       ok: true, // Simulate a successful HTTP response
-      json: async () => fakeApiNinjasMeal, // The response body will be our fake data
+      json: async () => fakeMealDBResponse, // The response body will be our fake data
     });
 
     render(<Search />); // Render the component
@@ -60,21 +64,20 @@ describe('Search component', () => {
     );
 
     // Assert that the result is displayed correctly.
-    expect(screen.getByTestId('result')).toHaveTextContent('1: Test Meal');
+    expect(screen.getByTestId('result')).toHaveTextContent('Test Meal');
 
-    // Assert that fetch was called with the correct API Ninjas URL for a 'name' search.
+    // Assert that fetch was called with the correct TheMealDB URL for a 'name' search.
     expect(global.fetch).toHaveBeenCalledWith(
-      'https://api.api-ninjas.com/v1/recipe?query=Test%20Meal',
-      { headers: { 'X-Api-Key': undefined } } // The API key is undefined in test environment, which is expected.
+      'https://www.themealdb.com/api/json/v1/1/search.php?s=Test%20Meal'
     );
   });
 
   // --- TEST CASE 2: NO RECIPES FOUND ---
-  test('shows a "no recipes found" error when the API returns an empty array', async () => {
-    // For this test, we mock a successful response, but with an empty array for the data.
+  test('shows a "no recipes found" error when the API returns no meals', async () => {
+    // For this test, we mock a successful response, but with no meals property.
     vi.spyOn(global, 'fetch').mockResolvedValue({
       ok: true,
-      json: async () => [], // Empty array simulates no results found
+      json: async () => ({ meals: null }), 
     });
 
     render(<Search />);
@@ -83,7 +86,7 @@ describe('Search component', () => {
     // The test should now look for the exact error message the component renders in this scenario.
     await waitFor(() =>
       expect(
-        screen.getByText('Error: No recipes found. Try a different search term.')
+        screen.getByText('No recipes found. Try a different search term.')
       ).toBeInTheDocument()
     );
   });
@@ -100,7 +103,7 @@ describe('Search component', () => {
     // We assert that the corresponding error message is displayed.
     await waitFor(() =>
       expect(
-        screen.getByText('Error: No recipes found. Try a different search term.')
+        screen.getByText('Something went wrong. Please try again.')
       ).toBeInTheDocument()
     );
   });

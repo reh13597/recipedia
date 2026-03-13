@@ -22,7 +22,7 @@ const fakeMeal = {
   strMeasure1: "1 cup",
 };
 
-describe("Scanner component", () => {
+describe("Indecisive component", () => {
   // Set up successful fetch before each test
   beforeEach(() => {
     global.fetch = vi.fn(() =>
@@ -43,7 +43,7 @@ describe("Scanner component", () => {
 
     // Ensure the initial prompt is visible
     expect(
-      screen.getByText(/don't know what you want to eat today\?/i)
+      screen.getByText(/feeling/i)
     ).toBeInTheDocument();
 
     // Click the "Surprise Me!" button
@@ -70,7 +70,7 @@ describe("Scanner component", () => {
 
     // Check that an error message is shown
     const err = await screen.findByText(
-      /error: failed to fetch recipes\. please try again\./i
+      /failed to fetch recipes\. please try again\./i
     );
     expect(err).toBeInTheDocument();
   });
