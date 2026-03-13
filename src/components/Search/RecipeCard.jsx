@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import useRecipe from '../../Hooks/UseRecipe.js';
 import { FaFileDownload, FaTimes, FaGlobe, FaUtensils, FaChartBar, FaClock } from 'react-icons/fa';
 
@@ -26,7 +26,7 @@ export default function SearchResult({ name, image, area, category, recipeData }
   useEffect(() => {
     const fetchNutrition = async () => {
       if (!showModal || !selectedRecipe?.ingredients || nutrition) return;
-      
+
       setLoading(true);
       setError(null);
 
@@ -42,7 +42,7 @@ export default function SearchResult({ name, image, area, category, recipeData }
 
         if (!response.ok) throw new Error(`Status: ${response.status}`);
         const data = await response.json();
-        
+
         const totals = data.reduce((acc, item) => {
           nutritionFields.forEach(f => {
             if (typeof item[f.key] === 'number') {
@@ -53,7 +53,7 @@ export default function SearchResult({ name, image, area, category, recipeData }
         }, {});
 
         setNutrition(totals);
-      } catch (err) {
+      } catch {
         setError("Nutrition data unavailable.");
       } finally {
         setLoading(false);
@@ -118,7 +118,7 @@ export default function SearchResult({ name, image, area, category, recipeData }
             <span className="badge badge-primary rounded-lg font-bold ">{category}</span>
           </div>
         </div>
-        
+
         <div className="p-6 space-y-4">
           <h3 className="text-2xl font-black tracking-tight leading-tight group-hover:text-primary transition-colors">
             {name}
@@ -133,7 +133,7 @@ export default function SearchResult({ name, image, area, category, recipeData }
       {showModal && selectedRecipe && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 lg:p-10 animate-in fade-in duration-300">
           <div className="absolute inset-0 bg-base-300/80 backdrop-blur-2xl" onClick={() => setShowModal(false)}></div>
-          
+
           <div className="relative glass bg-white/70 w-full max-w-6xl max-h-full overflow-hidden rounded-[3rem]  flex flex-col border border-white/40">
 
             <div className="flex items-center justify-between p-8 border-b border-white/20">

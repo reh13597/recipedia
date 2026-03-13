@@ -20,7 +20,7 @@ export default function EmailForm() {
             await emailjs.sendForm(serviceID, templateID, e.target, publicKey);
             setStatus({ type: 'success', msg: 'Message sent successfully! We\'ll get back to you soon.' });
             setFormData({ name: '', email: '', subject: '', message: '' });
-        } catch (error) {
+        } catch {
             setStatus({ type: 'error', msg: 'Failed to send message. Please try again later.' });
         } finally {
             setLoading(false);
