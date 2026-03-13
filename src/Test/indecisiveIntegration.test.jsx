@@ -3,9 +3,9 @@ import React from 'react'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import Indecisive from '../pages/Indecisive'
 
-// Mock SearchResult to isolate the integration test to Indecisive logic.
+// Mock RecipeCard to isolate the integration test to Indecisive logic.
 // Only render minimal UI to confirm data rendering.
-vi.mock('../components/Search/SearchResult', () => ({
+vi.mock('../components/Search/RecipeCard', () => ({
   __esModule: true,
   default: ({ name }) => (
     <div data-testid="random-recipe">
@@ -47,7 +47,7 @@ describe('Indecisive integration', () => {
 
     // Wait until loading indicator disappears
     await waitFor(() => {
-      expect(screen.queryByText(/fetching recipes/i)).not.toBeInTheDocument()
+      expect(screen.queryByText(/consulting the chefs/i)).not.toBeInTheDocument()
     })
 
     // Verify all three recipe names are rendered
@@ -71,7 +71,7 @@ describe('Indecisive integration', () => {
 
     // Expect error message to appear in the DOM
     await waitFor(() => {
-      expect(screen.getByText(/error: failed to fetch recipes/i)).toBeInTheDocument()
+      expect(screen.getByText(/failed to fetch recipes/i)).toBeInTheDocument()
     })
   })
 })

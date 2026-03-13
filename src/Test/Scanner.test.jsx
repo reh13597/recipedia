@@ -5,16 +5,21 @@ import Scanner from "../pages/Scanner";
 // Set a dummy API key so the component doesn't fail due to missing environment variables
 beforeAll(() => {
   process.env.VITE_API_NINJAS_KEY = "test_key";
+  
+  // Mock URL methods which are not available in JSDOM
+  global.URL.createObjectURL = vi.fn(() => "mock-url");
+  global.URL.revokeObjectURL = vi.fn();
 });
 
 describe("Scanner component", () => {
-  it("renders and has 'Get Nutrition!' button disabled initially", () => {
+  it("renders and has 'Get Nutrition Facts' button disabled initially", () => {
     render(<Scanner />);
 
     // Ensure heading and initial disabled button are present
-    expect(screen.getByText(/Nutrition Analysis/i)).toBeInTheDocument();
+    expect(screen.getByText(/Smart/i)).toBeInTheDocument();
+    expect(screen.getByText(/Nutrition Scanner\./i)).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /get nutrition!/i })
+      screen.getByRole("button", { name: /get nutrition facts/i })
     ).toBeDisabled();
   });
 
@@ -33,13 +38,13 @@ describe("Scanner component", () => {
     // Expect specific error message for large file
     expect(
       await screen.findByText(
-        /Error: File size is too large\. Please use a file smaller than 200 KB\./i
+        /file too large\. max 200kb allowed\./i
       )
     ).toBeInTheDocument();
 
     // Button should remain disabled
     expect(
-      screen.getByRole("button", { name: /get nutrition!/i })
+      screen.getByRole("button", { name: /get nutrition facts/i })
     ).toBeDisabled();
   });
 
@@ -56,12 +61,12 @@ describe("Scanner component", () => {
 
     // Expect format error message
     expect(
-      await screen.findByText(/Unsupported image format/i)
+      await screen.findByText(/unsupported format/i)
     ).toBeInTheDocument();
 
     // Button should remain disabled
     expect(
-      screen.getByRole("button", { name: /get nutrition!/i })
+      screen.getByRole("button", { name: /get nutrition facts/i })
     ).toBeDisabled();
   });
 
@@ -76,7 +81,7 @@ describe("Scanner component", () => {
     // No errors should appear, button should be enabled
     expect(screen.queryByText(/^Error:/)).toBeNull();
     expect(
-      screen.getByRole("button", { name: /get nutrition!/i })
+      screen.getByRole("button", { name: /get nutrition facts/i })
     ).toBeEnabled();
   });
 
@@ -98,6 +103,7 @@ describe("Scanner component", () => {
               Promise.resolve([
                 {
                   name: "apple",
+                  calories: 52,
                   fat_total_g: 0.2,
                   fat_saturated_g: 0.0,
                   sodium_mg: 1,
@@ -106,6 +112,7 @@ describe("Scanner component", () => {
                   carbohydrates_total_g: 14,
                   fiber_g: 2.4,
                   sugar_g: 10,
+                  protein_g: 0.3,
                 },
               ]),
           });
@@ -121,12 +128,13 @@ describe("Scanner component", () => {
     fireEvent.change(input, { target: { files: [png] } });
 
     // Click to trigger image-to-text and nutrition fetch
-    const btn = screen.getByRole("button", { name: /get nutrition!/i });
+    const btn = screen.getByRole("button", { name: /get nutrition facts/i });
     fireEvent.click(btn);
 
     // Wait for final output — don't assert spinner here
-    expect(await screen.findByText(/^apple$/i)).toBeInTheDocument();
-    expect(screen.getByText(/Estimated Calories:/i)).toBeInTheDocument();
+    // Use a more flexible matcher for the name because of CSS capitalization
+    expect(await screen.findByText(/apple/i)).toBeInTheDocument();
+    expect(screen.getByText(/52 kcal/i)).toBeInTheDocument();
 
     // Restore fetch mock
     fetchMock.mockRestore();

@@ -16,7 +16,7 @@ vi.mock('../components/Search/SearchHint', () => ({
   default: () => <div data-testid="search-hint">SearchHint</div>,
 }));
 
-vi.mock('../components/Search/SearchResult', () => ({
+vi.mock('../components/Search/RecipeCard', () => ({
   default: ({ name, area, category }) => (
     <div data-testid="search-result">
       <h2>{name}</h2>
@@ -53,7 +53,6 @@ vi.mock('../components/Search/SearchTopic', () => {
 });
 
 const MEALDB_BASE = 'https://www.themealdb.com/api/json/v1/1';
-const APININJAS_BASE = 'https://api.api-ninjas.com/v1/recipe?query=';
 
 // Test suite for the Search component's integration
 describe('Search Component (integration)', () => {
@@ -67,18 +66,21 @@ describe('Search Component (integration)', () => {
     vi.restoreAllMocks();
   });
 
-  // Test case: successful "name" search using the API-Ninjas endpoint
+  // Test case: successful "name" search
   it('performs a "name" search, renders a full recipe, and hides the loader', async () => {
-    // Mock a successful API-Ninjas response for a recipe search
+    // Mock a successful response for a recipe search
     global.fetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => [
-        {
-          title: 'Test Pasta',
-          instructions: 'Boil water. Cook pasta.',
-          ingredients: '200g Pasta | 1 tsp Salt',
-        },
-      ],
+      json: async () => ({
+        meals: [{
+          strMeal: 'Test Pasta',
+          strMealThumb: 'http://img/pasta.jpg',
+          strCategory: 'Pasta',
+          strArea: 'Italian',
+          strInstructions: 'Boil water. Cook pasta.',
+          strIngredient1: 'Pasta', strMeasure1: '200g',
+        }]
+      }),
     });
 
     // Render the Search component
@@ -90,22 +92,21 @@ describe('Search Component (integration)', () => {
     fireEvent.click(screen.getByText(/Run Search/i));
 
     // Assert that the loading message is displayed
-    expect(screen.getByText(/Fetching recipes, hang tight!/i)).toBeInTheDocument();
+    expect(screen.getByText(/Curating your results/i)).toBeInTheDocument();
 
     // Wait for the loading message to disappear after the fetch call
     await waitFor(() =>
-      expect(screen.queryByText(/Fetching recipes, hang tight!/i)).not.toBeInTheDocument()
+      expect(screen.queryByText(/Curating your results/i)).not.toBeInTheDocument()
     );
 
     // Assert that the recipe details from the mock data are rendered
     expect(screen.getByText('Test Pasta')).toBeInTheDocument();
-    expect(screen.getByText('Area: Unavailable')).toBeInTheDocument();
-    expect(screen.getByText('Category: Unavailable')).toBeInTheDocument();
+    expect(screen.getByText('Area: Italian')).toBeInTheDocument();
+    expect(screen.getByText('Category: Pasta')).toBeInTheDocument();
 
-    // Verify that the fetch function was called with the correct API-Ninjas URL
+    // Verify that the fetch function was called with the correct URL
     expect(global.fetch).toHaveBeenCalledWith(
-      `${APININJAS_BASE}pasta`,
-      { headers: { 'X-Api-Key': undefined } }
+      `${MEALDB_BASE}/search.php?s=pasta`
     );
   });
 
@@ -139,7 +140,7 @@ describe('Search Component (integration)', () => {
     fireEvent.click(screen.getByText(/Run Search/i));
 
     // Wait for the loading indicator to disappear, confirming both API calls have completed
-    await waitFor(() => expect(screen.queryByText(/Fetching recipes, hang tight!/i)).not.toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByText(/Curating your results/i)).not.toBeInTheDocument());
 
     // Assert that the recipe details from the second mock response are rendered
     expect(screen.getByText('Test Curry')).toBeInTheDocument();
@@ -147,17 +148,17 @@ describe('Search Component (integration)', () => {
     expect(screen.getByText('Category: Curry')).toBeInTheDocument();
 
     // Verify the first fetch call was made correctly for filtering
-    expect(global.fetch).toHaveBeenNthCalledWith(1, `${MEALDB_BASE}/filter.php?i=chicken`, {});
+    expect(global.fetch).toHaveBeenNthCalledWith(1, `${MEALDB_BASE}/filter.php?i=chicken`);
     // Verify the second fetch call was made correctly for getting recipe details
     expect(global.fetch).toHaveBeenNthCalledWith(2, `${MEALDB_BASE}/search.php?s=Test%20Curry`);
   });
 
   // Test case: handling a search with no results
   it('shows a friendly message when no recipes are found', async () => {
-    // Mock an API response with an empty array
+    // Mock an API response with null meals
     global.fetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => [],
+      json: async () => ({ meals: null }),
     });
 
     // Render the component
@@ -171,7 +172,7 @@ describe('Search Component (integration)', () => {
     // Wait for the "no recipes found" error message to appear
     await waitFor(() =>
       expect(
-        screen.getByText('Error: No recipes found. Try a different search term.')
+        screen.getByText('No recipes found. Try a different search term.')
       ).toBeInTheDocument()
     );
 
@@ -198,7 +199,7 @@ describe('Search Component (integration)', () => {
     // Wait for the generic error message to be displayed
     await waitFor(() =>
       expect(
-        screen.getByText('Error: No recipes found. Try a different search term.')
+        screen.getByText('Something went wrong. Please try again.')
       ).toBeInTheDocument()
     );
   });

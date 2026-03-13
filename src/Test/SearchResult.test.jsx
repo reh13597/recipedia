@@ -1,6 +1,6 @@
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import SearchResult from '../components/Search/SearchResult';
+import SearchResult from '../components/Search/RecipeCard';
 
 // Mocking the setSelectedRecipe function from the custom hook
 const mockSetSelectedRecipe = vi.fn();
@@ -35,7 +35,9 @@ describe('SearchResult API call test', () => {
         json: () =>
           Promise.resolve([
             {
+              calories: 300,
               fat_total_g: 10,
+              protein_g: 20,
               sodium_mg: 500,
               potassium_mg: 400,
               cholesterol_mg: 50,
@@ -57,7 +59,6 @@ describe('SearchResult API call test', () => {
   it('fetches nutrition data when modal is opened and displays results', async () => {
     render(
       <SearchResult
-        number={1}
         name="Mock Dish"
         image={sampleRecipe.image}
         area={sampleRecipe.area}
@@ -67,35 +68,35 @@ describe('SearchResult API call test', () => {
     );
 
     // Simulate a user click to open the modal
-    fireEvent.click(screen.getByText(/1\. Mock Dish/i));
+    fireEvent.click(screen.getByText(/Mock Dish/i));
 
     // Wait for the modal content to appear and the fetch calls to complete
     await waitFor(() => {
-      // Find the nutrition analysis block by its title
-      const nutritionBlock = screen
-        .getByText('Nutrition Analysis')
-        .closest('div');
+      // Find the nutrition block by its title
+      const nutritionHeading = screen.getByText('Nutrition');
+      const nutritionBlock = nutritionHeading.closest('div');
+      
       // Assert that the nutrition block exists and contains the expected content
       expect(nutritionBlock).toBeTruthy();
-      expect(nutritionBlock.textContent).toContain('Fat:');
-      expect(nutritionBlock.textContent).toContain('Sodium:');
-      expect(nutritionBlock.textContent).toContain('Cholesterol:');
-      expect(nutritionBlock.textContent).toContain('Estimated Calories:');
-      // The estimated calories (10*9 + 60*4 + 3*4) should be 90 + 240 + 12 = 342, but the mock data is hardcoded to return a specific value, which is 640. The text content check is based on this hardcoded value.
-      expect(nutritionBlock.textContent).toContain('640');
+      expect(screen.getByText('Total Fat')).toBeInTheDocument();
+      expect(screen.getByText('Sodium')).toBeInTheDocument();
+      expect(screen.getByText('Cholesterol')).toBeInTheDocument();
+      expect(screen.getByText('Calories')).toBeInTheDocument();
+      
+      // Check for values
+      expect(screen.getByText('300')).toBeInTheDocument();
+      expect(screen.getByText('10')).toBeInTheDocument();
     });
 
-    // Assert that the fetch function was called twice, once for each ingredient
-    expect(global.fetch).toHaveBeenCalledTimes(2);
-    // Verify the first fetch call was made with the pasta ingredient
+    // Assert that the fetch function was called once with all ingredients joined by \n
+    expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(global.fetch).toHaveBeenCalledWith(
-      expect.stringContaining('100g%20Pasta'),
-      expect.any(Object)
-    );
-    // Verify the second fetch call was made with the cheese ingredient
-    expect(global.fetch).toHaveBeenCalledWith(
-      expect.stringContaining('50g%20Cheese'),
-      expect.any(Object)
+      expect.stringContaining(encodeURIComponent('100g Pasta\n50g Cheese')),
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          'X-Api-Key': expect.any(String),
+        }),
+      })
     );
   });
 });
