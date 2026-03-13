@@ -39,11 +39,11 @@ export default function Indecisive() {
         setLoading(true);
         setError("");
         setRecipes([]);
-        
+
         try {
             const mealPromises = Array.from({ length: 3 }, fetchRandomRecipe);
             const meals = await Promise.all(mealPromises);
-            
+
             const formatted = meals.map(meal => ({
                 name: meal.strMeal,
                 image: meal.strMealThumb,
@@ -55,7 +55,7 @@ export default function Indecisive() {
 
             setRecipes(formatted);
             setHasGenerated(true);
-        } catch (err) {
+        } catch {
             setError("Failed to fetch recipes. Please try again.");
         } finally {
             setLoading(false);
@@ -70,10 +70,10 @@ export default function Indecisive() {
                     Feeling <span className="gradient-text">Indecisive?</span>
                 </h1>
                 <p className="text-xl text-base-content/60 max-w-2xl mx-auto font-medium leading-relaxed">
-                    Can't decide what to cook? Let fate choose your next culinary adventure. 
+                    Can't decide what to cook? Let fate choose your next culinary adventure.
                     Roll the dice to get three perfectly random recipe suggestions.
                 </p>
-                
+
                 <div className="pt-8">
                     <button
                         onClick={handleGeneration}
@@ -121,13 +121,13 @@ export default function Indecisive() {
                 {recipes.length > 0 && !loading && (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-in fade-in slide-in-from-bottom-10 duration-1000">
                         {recipes.map((recipe, idx) => (
-                            <RecipeCard 
-                                key={`${recipe.name}-${idx}`} 
-                                name={recipe.name} 
-                                image={recipe.image} 
-                                recipeData={recipe} 
-                                area={recipe.area} 
-                                category={recipe.category} 
+                            <RecipeCard
+                                key={`${recipe.name}-${idx}`}
+                                name={recipe.name}
+                                image={recipe.image}
+                                recipeData={recipe}
+                                area={recipe.area}
+                                category={recipe.category}
                             />
                         ))}
                     </div>

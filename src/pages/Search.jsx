@@ -93,7 +93,7 @@ export default function Search() {
             }
 
             setRecipes(results)
-        } catch (e) {
+        } catch {
             setError('Something went wrong. Please try again.')
         } finally {
             setLoading(false)
@@ -107,7 +107,7 @@ export default function Search() {
                     Find your next <span className="gradient-text">Masterpiece.</span>
                 </h1>
                 <p className="text-xl text-base-content/60 max-w-2xl mx-auto font-medium leading-relaxed">
-                    Search through thousands of curated recipes by cuisine, ingredients, or name. 
+                    Search through thousands of curated recipes by cuisine, ingredients, or name.
                     Detailed nutrition facts included for every meal.
                 </p>
             </div>
@@ -122,7 +122,7 @@ export default function Search() {
                     setError={setError}
                     setRecipes={setRecipes}
                 />
-                
+
                 <div className="mt-8">
                     <SearchHint searchType={searchType} />
                 </div>
@@ -145,13 +145,13 @@ export default function Search() {
                 {!loading && recipes.length > 0 && (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {recipes.map((recipe, idx) => (
-                            <RecipeCard 
-                                key={idx} 
-                                name={recipe.name} 
-                                image={recipe.image} 
-                                recipeData={recipe} 
-                                area={recipe.area} 
-                                category={recipe.category} 
+                            <RecipeCard
+                                key={idx}
+                                name={recipe.name}
+                                image={recipe.image}
+                                recipeData={recipe}
+                                area={recipe.area}
+                                category={recipe.category}
                             />
                         ))}
                     </div>
