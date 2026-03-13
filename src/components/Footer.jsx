@@ -1,68 +1,39 @@
-import { featuresLinks, aboutUsLinks } from "../constants";
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import logo from '../assets/icons/recipe-book.png';
+import { FaGithub } from 'react-icons/fa';
 
 export default function Footer() {
-    return(
-        <footer className="bg-base-100 text-secondary-content">
-            <div className=" space-y-5 py-5">
-                <div className="row ">
-                    <div className="grid lg:grid-cols-2 gap-3">
-                        {/* logo column */}
-                        <div className="flex items-center space-x-5 pl-120">
-                            <Link to="/" onClick={() => {window.scrollTo({ top: 0, behavior: 'smooth' })}}>
-                                <img src={logo} alt="Recipedia Logo" className="w-13 h-13 transition duration-300 hover:scale-110"/>
-                            </Link>
-                            <Link to="/" onClick={() => {window.scrollTo({ top: 0, behavior: 'smooth' })}} className="text-4xl text-base-content transition duration-300 hover:scale-110">Recipedia</Link>
-                        </div>
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
-                        {/* Two footer links columns */}
-                        <div className="grid lg:grid-cols-2 pr-80">
-                            <div>
-                                <h2 className="text-2xl text-base-content mb-2">Features</h2>
-                                <ul className="space-y-1">
-                                    {featuresLinks.map((link, index) => (
-                                        <li key={index}>
-                                            <a
-                                                className="text-lg text-secondary-content hover:text-base-content underline"
-                                                onClick={() => {
-                                                    window.scrollTo({ top: 0, behavior: 'smooth' })
-                                                }}
-                                                href={link.href}
-                                            >
-                                                {link.text}
-                                            </a>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                            <div>
-                                <h2 className="text-2xl text-base-content mb-2">About</h2>
-                                <ul className="space-y-1">
-                                    {aboutUsLinks.map((link, index) => (
-                                        <li key={index}>
-                                            <a
-                                                className="text-lg text-secondary-content hover:text-base-content underline"
-                                                onClick={() => {
-                                                    window.scrollTo({ top: 0, behavior: 'smooth' })
-                                                }}
-                                                href={link.href}
-                                            >
-                                                {link.text}
-                                            </a>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="row ">
-                    <p className="text-center text-secondary-content">
-                        &copy; 2025 Recipedia. All rights reserved.
-                    </p>
-                </div>
-            </div>
-        </footer>
-    );
+  return (
+    <footer className="w-full mt-20">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="w-full h-px bg-base-content/10 mb-10"></div>
+
+        <div className="flex flex-col md:flex-row items-center justify-between gap-8 pb-12">
+          <Link to="/" onClick={scrollToTop} className="flex items-center gap-3 group">
+            <img src={logo} alt="Recipedia Logo" className="w-10 h-10 transition-transform duration-500 group-hover:rotate-12" />
+            <span className="text-2xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">Recipedia</span>
+          </Link>
+
+          <p className="text-base-content/40 font-medium order-3 md:order-2">
+            Copyright © {new Date().getFullYear()} - All rights reserved
+          </p>
+
+          <div className="flex gap-4 order-2 md:order-3">
+            <a
+              href="https://github.com/reh13597/recipedia"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-ghost btn-circle hover:text-primary transition-all duration-300 hover:bg-primary/10"
+            >
+              <FaGithub size={24} />
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
 }

@@ -1,27 +1,27 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-function WhatWeOfferCards(props) {
+function WhatWeOfferCards({ image, title, content, link }) {
   return (
-    <div className="bg-white p-6 rounded-xl border-gray-400 shadow-2xl text-center">
-
-      <div className="flex justify-center mb-4">
-        <img src={props.image} alt="icon" className="w-8 h-8" />
+    <div className="glass p-8 rounded-3xl text-center hover-lift flex flex-col items-center gap-4 border border-white/20 h-full justify-between group">
+      <div className="bg-primary/10 p-4 rounded-2xl group-hover:bg-primary/20 transition-colors duration-300">
+        <img src={image} alt={title} className="w-12 h-12 object-contain group-hover:scale-110 transition-transform duration-300" />
       </div>
 
-      <h2 className="text-3xl mb-2">{props.title}</h2>
+      <div className="space-y-3">
+        <h2 className="text-3xl font-black tracking-tight text-primary">{title}</h2>
+        <p className="text-base-content/70 text-lg leading-relaxed font-medium">
+          {content}
+        </p>
+      </div>
 
-
-      <p className="text-[#535353] text-xl mb-4 border-blue-400 rounded p-2">
-        {props.content}
-      </p>
-
-      <a
-        href={props.link}
+      <Link
+        to={link.replace('#', '')}
         onClick={() => {window.scrollTo({ top: 0, behavior: 'smooth' })}}
-        className="btn btn-primary text-lg py-2 px-8 rounded-full transition duration-300 hover:scale-110 shadow-xl"
+        className="btn btn-primary btn-md rounded-2xl w-full mt-4 hover:scale-[1.02]"
       >
-        Check it out!
-      </a>
+        Explore Now
+      </Link>
     </div>
   );
 }

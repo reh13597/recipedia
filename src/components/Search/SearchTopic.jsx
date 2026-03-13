@@ -1,92 +1,77 @@
-import { useState, useEffect } from "react";
+import { FaSearch } from "react-icons/fa";
 
 export default function SearchTopic({ onSearch, searchType, setSearchType, inputText, setInputText, setError, setRecipes }){
-    const [isVisible, setIsVisible] = useState(false)
-
     const placeholderText = {
-        ingredient: "Search for recipes by main ingredient...",
-        name: "Search for recipes by name...",
-        area: "Search for recipes by cuisine...",
-        category: "Search for recipes by category...",
-        initial: "Pick an option above to start searching for recipes!"
+        ingredient: "Enter an ingredient (e.g. Chicken)...",
+        name: "Enter recipe name...",
+        area: "Enter cuisine (e.g. Italian)...",
+        category: "Enter category (e.g. Seafood)...",
+        initial: "Choose a search method above..."
     }
 
-    // handle search
     const handleSearch = () => {
-        // if the input text isn't empty and the search type isn't initial, handle the recipe search
         if (inputText.trim() && searchType !== "initial") {
             onSearch(searchType, inputText.trim())
         }
     }
 
-    // handle key press
     const handleKeyPress = (e) => {
-        if (e.key === "Enter") {
-            handleSearch()
-        }
+        if (e.key === "Enter") handleSearch()
     }
 
-    useEffect(() => {
-        // search type is set to inital at first, to display a message on page land
-        setSearchType("initial")
-        // starts a timer, then after 300 ms, the state of isVisible changes
-        // this is used for the animation of components on page load
-        const showTimeout = setTimeout(() => setIsVisible(true), 300)
-
-        // if the component unmounts or re-renders before the timeout finishes,
-        // the timer is cleared to prevent memory leaks and warnings
-        return () => {
-            clearTimeout(showTimeout);
-        }
-    }, [])
+    const topics = [
+        { id: 'name', label: 'Name' },
+        { id: 'area', label: 'Cuisine' },
+        { id: 'category', label: 'Category' },
+        { id: 'ingredient', label: 'Ingredient' },
+    ]
 
     return(
-        <div className="flex flex-col items-start pt-1 space-y-6">
-            <div className={`flex justify-start space-x-6 transition ${isVisible ? 'opacity-100 translate-y-0 delay-100' : 'opacity-0 translate-y-10'}`}>
-                <button
-                    onClick={() => {setSearchType("name"), setInputText(''), setError(''), setRecipes([])}}
-                    className={`${searchType === "name" ? "bg-[#DE6B48]" : "bg-[#C0BABA]"}
-                                hover:bg-[#DE6B48] text-white px-4 rounded-full transition-all duration-300 hover:scale-110 cursor-pointer shadow-xl`}
+        <div className="flex flex-col gap-8 w-full">
+            <div className="flex flex-wrap justify-center gap-3">
+                {topics.map((topic) => (
+                    <button
+                        key={topic.id}
+                        onClick={() => {
+                            setSearchType(topic.id)
+                            setInputText('')
+                            setError('')
+                            setRecipes([])
+                        }}
+                        className={`btn btn-md rounded-2xl px-8 transition-all duration-300 border-none ${
+                            searchType === topic.id 
+                            ? "btn-primary scale-105" 
+                            : "bg-base-100 hover:bg-base-200 text-base-content/70"
+                        }`}
                     >
-                        Name
-                </button>
-                <button
-                    onClick={() => {setSearchType("area"), setInputText(''), setError(''), setRecipes([])}}
-                    className={`${searchType === "area" ? "bg-[#DE6B48]" : "bg-[#C0BABA]"}
-                                hover:bg-[#DE6B48] text-white py-2 px-5 rounded-full transition-all duration-300 hover:scale-110 cursor-pointer shadow-xl`}
-                >
-                        Cuisine
-                </button>
-                <button
-                    onClick={() => {setSearchType("category"), setInputText(''), setError(''), setRecipes([])}}
-                    className={`${searchType === "category" ? "bg-[#DE6B48]" : "bg-[#C0BABA]"}
-                                hover:bg-[#DE6B48] text-white px-4 rounded-full transition-all duration-300 hover:scale-110 cursor-pointer shadow-xl`}
-                    >
-                        Category
-                </button>
-                <button
-                    onClick={() => {setSearchType("ingredient"), setInputText(''), setError(''), setRecipes([])}}
-                    className={`${searchType === "ingredient" ? "bg-[#DE6B48]" : "bg-[#C0BABA]"}
-                                hover:bg-[#DE6B48] text-white px-4 rounded-full transition-all duration-300 hover:scale-110 cursor-pointer shadow-xl`}
-                    >
-                        Main Ingredient
-                </button>
+                        {topic.label}
+                    </button>
+                ))}
             </div>
-            <div className={`relative flex items-center gap-2 w-full transition ${isVisible ? 'opacity-100 translate-y-0 delay-300' : 'opacity-0 translate-y-10'}`}>
-                <button
-                onClick={() => handleSearch()}
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#C0BABA] hover:text-[#C0BABA]">
-                    <i className="fas fa-search text-[#C0BABA] hover:text-[#DE6B48] duration-300 hover:scale-120"></i>
-                </button>
+
+            <div className="relative group max-w-2xl mx-auto w-full">
                 <input
-                type = "text"
-                placeholder = {placeholderText[searchType]}
-                value = {inputText}
-                onChange = {((e) => setInputText(e.target.value))}
-                onKeyDown={handleKeyPress}
-                disabled={searchType === "initial"}
-                className = "bg-white shadow-xl h-10 px-10 rounded-full text-sm w-full focus:outline-none focus:ring-2 focus:ring-[#C0BABA]">
-                </input>
+                    type="text"
+                    placeholder={placeholderText[searchType]}
+                    value={inputText}
+                    onChange={(e) => setInputText(e.target.value)}
+                    onKeyDown={handleKeyPress}
+                    disabled={searchType === "initial"}
+                    className="input input-lg w-full rounded-3xl pl-14 bg-base-100 border-base-content/10 focus:border-primary focus:outline-none transition-all"
+                />
+                <button
+                    onClick={handleSearch}
+                    className="absolute left-5 top-1/2 -translate-y-1/2 text-base-content/30 group-focus-within:text-primary transition-colors"
+                >
+                    <FaSearch size={20} />
+                </button>
+                <button
+                    onClick={handleSearch}
+                    disabled={searchType === "initial" || !inputText.trim()}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 btn btn-primary btn-sm rounded-2xl px-6"
+                >
+                    Search
+                </button>
             </div>
         </div>
     );

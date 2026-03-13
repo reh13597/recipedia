@@ -1,11 +1,11 @@
-import Section1 from '../components/Section1_Home'
-import Section2 from '../components/Section2_Home';
+import Hero from '../components/Hero'
+import Features from '../components/Features';
 
 export default function Home() {
     return(
         <>
-            <Section1/>
-            <Section2/>
+            <Hero/>
+            <Features/>
         </>
     );
 }
