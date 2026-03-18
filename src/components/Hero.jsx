@@ -25,7 +25,7 @@ export default function Section1_Home() {
 
                 <div className={`transition-all duration-1000 delay-300 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}>
                     <p className="text-xl lg:text-3xl text-base-content/70 font-medium leading-relaxed max-w-3xl mx-auto">
-                        Welcome to <span className="text-primary font-bold">Recipedia</span>. 
+                        Welcome to <span className="text-primary font-bold">Recipedia</span>.
                         The smart companion for your culinary journey. Discover recipes, scan nutrition, and transform your kitchen into a center of wellness.
                     </p>
                 </div>
@@ -43,11 +43,6 @@ export default function Section1_Home() {
                         </button>
                     </div>
                 </div>
-            </div>
-
-            <div className="absolute bottom-10 animate-bounce cursor-pointer opacity-50 hover:opacity-100 transition-opacity"
-                 onClick={() => document.getElementById('section2')?.scrollIntoView({ behavior: 'smooth' })}>
-                <img className="h-6 w-6 opacity-30" src={arrow} alt="scroll down" />
             </div>
         </section>
     );
