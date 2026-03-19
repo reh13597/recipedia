@@ -32,6 +32,7 @@ function Navbar() {
               <li key={link.path}>
                 <Link
                   to={link.path}
+                  onClick={scrollToTop}
                   className={`px-4 py-2 rounded-xl text-lg font-medium transition-all duration-300 hover:text-primary hover:bg-primary/10 ${
                     location.pathname === link.path ? 'text-primary font-bold bg-primary/10' : 'text-base-content/70'
                   }`}
@@ -55,6 +56,7 @@ function Navbar() {
                 <li key={link.path}>
                   <Link
                     to={link.path}
+                    onClick={scrollToTop}
                     className={location.pathname === link.path ? 'bg-primary/20 text-primary font-bold' : 'hover:bg-primary/10 transition-colors'}
                   >
                     {link.label}
