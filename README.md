@@ -1,6 +1,4 @@
-# Project Name
-
-**Recipedia**
+# Recipedia
 
 ---
 
@@ -15,17 +13,11 @@
 
 ## Links To Website, Project Reports, & Videos
 
-[Website Link](https://recipedia-mtvj.onrender.com/)
+[Website Link](https://rcpdia.vercel.app/)
 
 [Project Reports](./docs/reports/)
 
 [Videos](./docs/videos/)
-
----
-
-## Note
-The website isn't fully responsive yet (looks best on 1920x1080 resolution), however this will be implemented in the future, along with other features and tweaks.
-Due to the limitations of the project requirements, the recipe search by name feature uses API Ninja's recipe endpoint instead of TheMealDB's recipe endpoint, which results in less search results and recipe data.
 
 ---
 
@@ -39,7 +31,7 @@ Recipedia is a recipe generator that enables users to search for recipes while p
 To deploy this project locally, please follow the instructions below.
 
 1. Download the .env file provided from our Canvas submission.
-2. Clone the project repository from GitHub by running `git clone https://github.com/CMPT-276-SUMMER-2025/final-project-16-moons`.
+2. Clone the project repository from GitHub by running `git clone https://github.com/reh13596/recipedia`.
 3. Open the project files with a VDE of your choice.
 4. Put the .env file in the root directory of the project.
 5. Install all the required dependencies by entering `npm install` in your terminal, while in the project's root directory.
