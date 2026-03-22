@@ -28,4 +28,4 @@ CI/CD:
 - GitHub Actions, Vercel
 
 APIs:
-- TheMealDB API, APINinjas
+- TheMealDB API, APINinjas, EmailJS
