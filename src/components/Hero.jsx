@@ -39,7 +39,7 @@ export default function Section1_Home() {
                             className="btn btn-primary btn-lg rounded-2xl px-12 transition-all duration-300 hover:scale-[1.02] group"
                         >
                             Get Started
-                            <img className="h-5 w-5 ml-2 group-hover:translate-y-1 transition-transform" src={arrow} alt="arrow" />
+                            <img className="h-5 w-5 ml-2" src={arrow} alt="arrow" />
                         </button>
                     </div>
                 </div>

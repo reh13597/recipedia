@@ -19,7 +19,7 @@ export default function Footer() {
           </Link>
 
           <p className="text-base-content/40 font-medium order-3 md:order-2">
-            Copyright © {new Date().getFullYear()} - All rights reserved
+            © {new Date().getFullYear()} Recipedia. All rights reserved
           </p>
 
           <div className="flex gap-4 order-2 md:order-3">

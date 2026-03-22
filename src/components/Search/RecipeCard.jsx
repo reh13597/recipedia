@@ -94,7 +94,7 @@ export default function SearchResult({ name, image, area, category, recipeData }
             <div class="section">
               <h2>Nutrition (Per Recipe)</h2>
               <div class="nutri">
-                ${nutritionFields.map(f => `<div><strong>${f.label}:</strong> ${nutrition[f.key]?.toFixed(1)} ${f.unit}</div>`).join('')}
+                ${nutritionFields.map(f => `<div><strong>${f.label}:</strong> ${['calories', 'protein_g'].includes(f.key) ? 'Unavailable' : `${nutrition[f.key]?.toFixed(1)} ${f.unit}`}</div>`).join('')}
               </div>
             </div>
           ` : ''}
@@ -110,10 +110,10 @@ export default function SearchResult({ name, image, area, category, recipeData }
     <>
       <div
         onClick={() => { setSelectedRecipe(recipeData); setShowModal(true); }}
-        className="group relative bg-base-100 rounded-[2rem] overflow-hidden hover-lift border border-white/10"
+        className="group relative bg-base-100 rounded-[2rem] overflow-hidden hover-lift border border-white/10 hover:cursor-pointer"
       >
         <div className="aspect-video w-full overflow-hidden">
-          <img src={image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt={name} />
+          <img src={image} className="w-full h-full object-cover group-hover:scale-110 hover:cursor-pointer transition-transform duration-700" alt={name} />
           <div className="absolute top-4 left-4 flex gap-2">
             <span className="badge badge-primary rounded-lg font-bold ">{category}</span>
           </div>
@@ -125,7 +125,7 @@ export default function SearchResult({ name, image, area, category, recipeData }
           </h3>
           <div className="flex items-center gap-4 text-base-content/60 font-medium">
             <span className="flex items-center gap-1.5"><FaGlobe className="text-primary/50" /> {area}</span>
-            <span className="flex items-center gap-1.5"><FaUtensils className="text-primary/50" /> {recipeData.ingredients.length} Items</span>
+            <span className="flex items-center gap-1.5"><FaUtensils className="text-primary/50" /> {recipeData.ingredients.length} Ingredients</span>
           </div>
         </div>
       </div>
@@ -180,7 +180,10 @@ export default function SearchResult({ name, image, area, category, recipeData }
                         {nutritionFields.map(f => (
                           <div key={f.key} className="p-3 bg-white/40 rounded-2xl border border-white/40">
                             <p className="text-[10px] uppercase font-black text-base-content/40 tracking-widest">{f.label}</p>
-                            <p className="text-lg font-bold">{nutrition?.[f.key]?.toFixed(0) || 0}<span className="text-xs ml-1 opacity-50">{f.unit}</span></p>
+                            <p className="text-md font-bold">
+                              {['calories', 'protein_g'].includes(f.key) ? 'Unavailable' : (nutrition?.[f.key]?.toFixed(0) || 0)}
+                              {!['calories', 'protein_g'].includes(f.key) && <span className="text-xs ml-1 opacity-50">{f.unit}</span>}
+                            </p>
                           </div>
                         ))}
                       </div>

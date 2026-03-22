@@ -102,10 +102,10 @@ export default function Scanner() {
                             <div class="grid">
                                 <div>Fat: ${item.fat_total_g}g</div>
                                 <div>Carbs: ${item.carbohydrates_total_g}g</div>
-                                <div>Protein: ${item.protein_g}g</div>
+                                <div>Protein: Unavailable</div>
                                 <div>Sugar: ${item.sugar_g}g</div>
                             </div>
-                            <div class="cal">Calories: ${item.calories} kcal</div>
+                            <div class="cal">Calories: Unavailable</div>
                         </div>
                     `).join('')}
                     <script>window.onload = () => { window.print(); window.close(); }</script>
@@ -123,7 +123,7 @@ export default function Scanner() {
                     Smart <span className="gradient-text">Nutrition Scanner.</span>
                 </h1>
                 <p className="text-xl text-base-content/60 max-w-2xl mx-auto font-medium leading-relaxed">
-                    Upload an image of a menu, recipe, or food journal. 
+                    Upload an image of a menu, recipe, or food journal.
                     Our AI will extract the text and analyze the nutritional content instantly.
                 </p>
             </div>
@@ -217,16 +217,16 @@ export default function Scanner() {
                                 <div key={idx} className="bg-white/50 p-6 rounded-[2rem] border border-white/50 transition-all group">
                                     <div className="flex justify-between items-start mb-4">
                                         <h3 className="text-xl font-black tracking-tight text-primary capitalize">{item.name}</h3>
-                                        <div className="bg-primary/10 px-3 py-1 rounded-lg text-xs font-black text-primary">
-                                            {item.calories} kcal
+                                        <div className="bg-primary/10 px-2 py-1 rounded-lg text-xs font-black text-primary">
+                                            Calories Unavailable
                                         </div>
                                     </div>
-                                    
+
                                     <div className="grid grid-cols-2 gap-3 text-sm">
                                         {[
                                             { label: 'Fat', val: item.fat_total_g, unit: 'g' },
                                             { label: 'Carbs', val: item.carbohydrates_total_g, unit: 'g' },
-                                            { label: 'Protein', val: item.protein_g, unit: 'g' },
+                                            { label: 'Protein', val: 'Unavailable'},
                                             { label: 'Sugar', val: item.sugar_g, unit: 'g' }
                                         ].map(stat => (
                                             <div key={stat.label} className="flex flex-col">

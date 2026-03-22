@@ -11,18 +11,17 @@ import Navbar from './components/Navbar';
 function App() {
   return (
     <RecipeProvider>
-
-    <HashRouter>
-      <Navbar />
-      <Routes>
-        <Route exact path ="/" element={<Home />} />
-        <Route path ="/search" element={<Search />} />
-        <Route path ="/scanner" element={<Scanner />} />
-        <Route path ="/indecisive" element={<Indecisive />} />
-        <Route path ="/contact" element={<Contact />} />
-      </Routes>
-      <Footer />
-    </HashRouter>
+      <HashRouter>
+        <Navbar />
+        <Routes>
+          <Route exact path ="/" element={<Home />} />
+          <Route path ="/search" element={<Search />} />
+          <Route path ="/scanner" element={<Scanner />} />
+          <Route path ="/indecisive" element={<Indecisive />} />
+          <Route path ="/contact" element={<Contact />} />
+        </Routes>
+        <Footer />
+      </HashRouter>
     </RecipeProvider>
   );
 }

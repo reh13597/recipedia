@@ -30,7 +30,7 @@ export default function FoodIconsBar() {
                             <img
                                 src={icon.src}
                                 alt={icon.alt}
-                                className="w-10 h-10 lg:w-12 lg:h-12 object-contain filter drop-shadow-md group-hover:drop-shadow-lg transition-all duration-700 ease-in-out"
+                                className="hover:cursor-default w-10 h-10 lg:w-12 lg:h-12 object-contain filter drop-shadow-md group-hover:drop-shadow-lg transition-all duration-700 ease-in-out"
                             />
                         </div>
                         {/* Shadow underneath */}
@@ -43,12 +43,12 @@ export default function FoodIconsBar() {
                 onClick={() => {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className="group flex flex-col items-center gap-2 mt-8 opacity-40 hover:opacity-100 transition-all duration-500"
+                className="drop-shadow-lg transition-all duration-300 hover:scale-[1.04] hover:cursor-pointer group flex flex-col items-center gap-2 mt-8 opacity-50 hover:opacity-100"
             >
-                <div className="w-12 h-12 rounded-full border border-base-content/20 flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:text-primary-content transition-all duration-500">
-                    <img className="h-5 w-5 rotate-180 brightness-0 dark:invert transition-all group-hover:invert-0 group-hover:brightness-100" src={arrow} alt="scroll up" />
+                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center">
+                    <img className="h-5 w-5 rotate-180 base-content" src={arrow} alt="scroll up" />
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-base-content/40 group-hover:text-primary transition-colors">Top</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-base-content group-hover:text-primary transition duration-300">Top</span>
             </button>
         </div>
     );

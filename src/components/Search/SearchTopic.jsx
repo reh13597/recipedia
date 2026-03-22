@@ -2,11 +2,11 @@ import { FaSearch } from "react-icons/fa";
 
 export default function SearchTopic({ onSearch, searchType, setSearchType, inputText, setInputText, setError, setRecipes }){
     const placeholderText = {
-        ingredient: "Enter an ingredient (e.g. Chicken)...",
-        name: "Enter recipe name...",
-        area: "Enter cuisine (e.g. Italian)...",
-        category: "Enter category (e.g. Seafood)...",
-        initial: "Choose a search method above..."
+        ingredient: "Enter an ingredient",
+        name: "Enter a recipe name",
+        area: "Enter a cuisine",
+        category: "Enter a category",
+        initial: "Choose a search method above"
     }
 
     const handleSearch = () => {
@@ -39,8 +39,8 @@ export default function SearchTopic({ onSearch, searchType, setSearchType, input
                             setRecipes([])
                         }}
                         className={`btn btn-md rounded-2xl px-8 transition-all duration-300 border-none ${
-                            searchType === topic.id 
-                            ? "btn-primary scale-105" 
+                            searchType === topic.id
+                            ? "btn-primary scale-105"
                             : "bg-base-100 hover:bg-base-200 text-base-content/70"
                         }`}
                     >
