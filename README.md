@@ -21,17 +21,6 @@ Recipedia is a recipe generator that enables users to search for recipes while p
 
 ## Tech Stack
 
-Front-End:
-- React
-- JavaScript
-- Tailwind CSS
-- Daisy UI
-
-CI/CD:
-- GitHub Actions
-- Vercel
-
-APIs:
-- TheMealDB API
-- APINinjas
-- EmailJS
+| **Front-End** | **CI/CD** | **APIs** |
+| :--------: | :--------: | :--------: |
+| React, <br> JavaScript, <br> Tailwind CSS, <br> Daisy UI | GitHub Actions, <br> Vercel | TheMealDB API, <br> APINinjas, <br> EmailJS
